@@ -1,6 +1,6 @@
 [package]
 name = "kingfisher"
-version = "0.0.2"
+version = "0.0.3"
 edition = "2021"
 license = "MIT OR Apache-2.0"
 homepage = "https://github.com/mongrov/kingfisher"
@@ -14,10 +14,10 @@ description = "fast template engine(s) with any config (json, yaml, toml)"
 log = "0.4"
 env_logger = "0.10"
 config = "0.13"
-clap = { version = "4.2", features = ["derive"] }
+clap = { version = "4.3", features = ["derive"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-handlebars = "4.3.6"
+handlebars = "4.3.7"
 
 [[bin]]
 edition = "2021"
