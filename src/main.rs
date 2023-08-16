@@ -103,7 +103,7 @@ fn main() {
             config,
             output,
         } => {
-            fs::write(output, parse_to_json(&config))
+            fs::write(output, parse_to_json(config))
                 .expect("Unable to write to file");
         }
     }
