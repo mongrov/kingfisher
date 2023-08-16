@@ -32,6 +32,7 @@ enum Commands {
     },
 }
 
+#[allow(clippy::filter_map_identity)]
 fn hocon_to_json(hocon: Hocon) -> Option<Value> {
     match hocon {
         Hocon::Boolean(b) => Some(Value::Bool(b)),
