@@ -34,23 +34,6 @@ jobs:
             target: aarch64-unknown-linux-musl
             bin: kf
             name: kf-Linux-aarch64-musl.tar.gz
-          - os_name: Linux-arm
-            os: ubuntu-20.04
-            target: arm-unknown-linux-musleabi
-            bin: kf
-            name: kf-Linux-arm-musl.tar.gz
-          - os_name: Linux-i686
-            os: ubuntu-20.04
-            target: i686-unknown-linux-musl
-            bin: kf
-            name: kf-Linux-i686-musl.tar.gz
-            skip_tests: true
-          - os_name: Windows-i686
-            os: windows-latest
-            target: i686-pc-windows-msvc
-            bin: kf.exe
-            name: kf-Windows-i686.zip
-            skip_tests: true
           - os_name: Windows-x86_64
             os: windows-latest
             target: x86_64-pc-windows-msvc
@@ -69,8 +52,8 @@ jobs:
             skip_tests: true
         toolchain:
           - stable
-          - beta
-          - nightly
+          #- beta
+          #- nightly
     steps:
       - uses: actions/checkout@v3
       - name: Cache cargo & target directories
@@ -87,7 +70,7 @@ jobs:
           command: "build"
           target: ${{ matrix.platform.target }}
           toolchain: ${{ matrix.toolchain }}
-          args: "--locked --release"
+          args: "--offline --release"
           strip: true
       - name: Run tests
         uses: houseabsolute/actions-rust-cross@v0
@@ -95,7 +78,7 @@ jobs:
           command: "test"
           target: ${{ matrix.platform.target }}
           toolchain: ${{ matrix.toolchain }}
-          args: "--locked --release"
+          args: "--offline --release"
         if: ${{ !matrix.platform.skip_tests }}
       - name: Package as archive
         shell: bash

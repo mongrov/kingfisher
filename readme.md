@@ -2,6 +2,14 @@
 
 Fast command line tool to run template engines
 
+## Usage
+
+Use handlebar template to produce output.
+
+```sh
+kf hb input.yaml handlebar.tmpl output.file
+```
+
 ## Dev Workflow
 
 ```bash
