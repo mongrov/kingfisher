@@ -2,8 +2,11 @@ extern crate log;
 use clap::{Parser, Subcommand};
 use config::Config;
 use handlebars::Handlebars;
+use hocon::{Hocon, HoconLoader};
 use log::debug;
+use serde_json::{Number, Value};
 use std::{collections::BTreeMap, fs};
+
 // use std::collections::HashMap;
 
 #[derive(Parser)]
@@ -17,7 +20,48 @@ struct Cli {
 #[derive(Subcommand)]
 enum Commands {
     /// handlebar templates
-    Hb { config: String, template: String, output: String },
+    Hb {
+        config: String,
+        template: String,
+        output: String,
+    },
+    /// conf (hocon) to yaml file
+    Conf {
+        config: String,
+        output: String,
+    },
+}
+
+fn hocon_to_json(hocon: Hocon) -> Option<Value> {
+    match hocon {
+        Hocon::Boolean(b) => Some(Value::Bool(b)),
+        Hocon::Integer(i) => Some(Value::Number(Number::from(i))),
+        Hocon::Real(f) => Some(Value::Number(
+            Number::from_f64(f).unwrap_or(Number::from(0)),
+        )),
+        Hocon::String(s) => Some(Value::String(s)),
+        Hocon::Array(vec) => Some(Value::Array(
+            vec.into_iter()
+                .map(hocon_to_json)
+                .filter_map(|i| i)
+                .collect(),
+        )),
+        Hocon::Hash(map) => Some(Value::Object(
+            map.into_iter()
+                .map(|(k, v)| (k, hocon_to_json(v)))
+                .filter_map(|(k, v)| v.map(|v| (k, v)))
+                .collect(),
+        )),
+        Hocon::Null => Some(Value::Null),
+        Hocon::BadValue(_) => None,
+    }
+}
+
+fn parse_to_json(path: &str) -> String {
+    // let hocon = dbg!(HoconLoader::new().no_system().load_file(path).unwrap().hocon()).unwrap();
+    let hocon = HoconLoader::new().no_system().load_file(path).unwrap().hocon().unwrap();
+    let json: Option<_> = hocon_to_json(hocon);
+    serde_yaml::to_string(&json).unwrap()
 }
 
 fn main() {
@@ -29,7 +73,11 @@ fn main() {
     // You can check for the existence of subcommands, and if found use their
     // matches just as you would the top level cmd
     match &cli.command {
-        Commands::Hb { config , template, output} => {
+        Commands::Hb {
+            config,
+            template,
+            output,
+        } => {
             // create the handlebars registry
             let mut handlebars = Handlebars::new();
             let settings = Config::builder()
@@ -42,9 +90,21 @@ fn main() {
             //         .try_deserialize::<BTreeMap<String, String>>()
             //         .unwrap()
             // );
-            handlebars.register_template_file("template", template).unwrap();
-            let data = settings.try_deserialize::<BTreeMap<String, String>>().unwrap();
-            fs::write(output, handlebars.render("template", &data).unwrap()).expect("Unable to write to file");
+            handlebars
+                .register_template_file("template", template)
+                .unwrap();
+            let data = settings
+                .try_deserialize::<BTreeMap<String, String>>()
+                .unwrap();
+            fs::write(output, handlebars.render("template", &data).unwrap())
+                .expect("Unable to write to file");
+        }
+        Commands::Conf {
+            config,
+            output,
+        } => {
+            fs::write(output, parse_to_json(&config))
+                .expect("Unable to write to file");
         }
     }
 }
