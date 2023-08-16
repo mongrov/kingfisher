@@ -5,21 +5,26 @@ edition = "2021"
 license = "MIT OR Apache-2.0"
 homepage = "https://github.com/mongrov/kingfisher"
 repository = "https://github.com/mongrov/kingfisher"
-keywords = ["cli", "mustache", "template"]
-description = "fast template engine(s) with any config (json, yaml, toml)"
+keywords = ["cli", "handlebar", "template", "hocon", "converter"]
+description = "fast template engine(s) with any config (hocon, json, json5, yaml, toml)"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 log = "0.4"
 env_logger = "0.10"
-config = "0.13"
 clap = { version = "4.3", features = ["derive"] }
+
+# serializers
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 serde_yaml = "0.9"
-handlebars = "4.3.7"
 
+# template engine
+handlebars = "4.3"
+
+# formats (json, json5, yaml etc.,)
+config = "0.13"
 # special format
 hocon = "0.9.0"
 
