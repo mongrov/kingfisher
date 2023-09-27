@@ -13,7 +13,7 @@ description = "fast template engine(s) with any config (hocon, json, json5, yaml
 [dependencies]
 log = "0.4"
 env_logger = "0.10"
-clap = { version = "4.3", features = ["derive"] }
+clap = { version = "4.4", features = ["derive"] }
 
 # serializers
 serde = { version = "1.0", features = ["derive"] }
@@ -21,7 +21,7 @@ serde_json = "1.0"
 serde_yaml = "0.9"
 
 # template engine
-handlebars = "4.3"
+handlebars = "4.4"
 
 # formats (json, json5, yaml etc.,)
 config = "0.13"
